@@ -9,9 +9,10 @@
 ## Expressions outside the supported subset are evaluated by Polars instead, so
 ## the result is always complete: the Nim side only takes over what it can.
 
-import std/[os, osproc, strutils, dynlib, hashes, times, options, monotimes]
+import std/[os, osproc, strutils, dynlib, hashes, times, options, monotimes, sequtils]
 import nanuq
-import nif, polars2nif, sem, nif2nim, kabi
+import nif, polars2nif, sem, nif2nim, kabi, udf
+export udf
 
 type
   JitStats* = object
@@ -104,14 +105,36 @@ proc planKernels*(df: DataFrame, exprs: openArray[Expr]): (seq[Option[Kernel]], 
   let schema = df.schemaOf
   var kernels = tree("kernels")
   var plan: seq[Option[Kernel]]
-  for i, e in exprs:
+  udfSigs.setLen 0
+  for u in udfs:
     try:
-      let k = semKernel(toNif(e.meta.serialize(SerializationFormat.Json)), schema, "k" & $i)
+      udfSigs.add UdfSig(name: u.name, ret: (case u.ret
+        of "float64": tF64
+        of "int64": tI64
+        of "bool": tBool
+        else: raise newException(Unsupported, "UDF result type " & u.ret)),
+        params: u.params.mapIt(if it == "int64": tI64 else: tF64))
+    except Unsupported: discard
+  var used: seq[string]
+  proc collectCalls(n: Nif) =
+    if n.kind != nkTree: return
+    if n.tag == "call" and n[1].s notin used: used.add n[1].s
+    for k in n.kids: collectCalls(k)
+  for i, e in exprs:
+    let json = e.meta.serialize(SerializationFormat.Json)
+    try:
+      let k = semKernel(toNif(json), schema, "k" & $i)
       plan.add some(k)
       kernels.kids.add k.nif
+      collectCalls(k.nif)
     except Unsupported as err:
+      if UdfMarker in json:
+        # Polars cannot evaluate nimCall's placeholder: no fallback
+        raise newException(Unsupported, "expression with a Nim UDF: " & err.msg)
       plan.add none(Kernel)
       stats.fallbackReasons.add err.msg
+  for name in used:
+    kernels.kids.add tree("udf", str(name), str(udfs[findUdf(name)].src))
   (plan, kernels)
 
 proc nimSelect*(df: DataFrame, exprs: varargs[Expr]): seq[Series] =

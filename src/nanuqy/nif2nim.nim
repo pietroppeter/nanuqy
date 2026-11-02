@@ -167,6 +167,18 @@ proc gen(g: var Gen, n: Nif, inLoop: bool): Val =
     let x = g.gen(n[1], inLoop)
     let p = g.gen(n[2], inLoop)
     result = Val(v: x.v, ok: x.ok, act: "(" & x.act & " && " & p.act & " && " & p.ok & " && " & p.v & ")")
+  of "call":
+    # a {.nimKernel.} proc, whose source is part of the module: an ordinary
+    # (inlined) Nim call per row
+    var args: seq[string]
+    var ok: seq[string]
+    for i in 2 ..< n.len:
+      let a = g.gen(n[i], inLoop)
+      args.add a.v
+      if a.ok != "true": ok.add a.ok
+    let t = g.fresh()
+    g.put(inLoop, ind, "let " & t & " = " & n[1].s & "(" & args.join(", ") & ")")
+    result = Val(v: t, ok: (if ok.len == 0: "true" else: "(" & ok.join(" && ") & ")"), act: "true")
   of "sum", "mean", "min", "max", "count", "len":
     doAssert not inLoop, "aggregation inside a row expression"
     result = g.genAgg(n)
@@ -248,7 +260,15 @@ proc genModule*(kernels: Nif, nimony = false): string =
   if nimony: result.add "{.feature: \"lenientnils\".}\n"
   else: result.add "{.push overflowChecks: off, boundChecks: off, rangeChecks: off.}\n"
   result.add Prelude & "\n"
+  # {.nimKernel.} procs travel inside the NIF as (udf "name" "source")
+  var hasUdf = false
   for k in kernels.kids:
+    if k.isTag("udf"):
+      if not hasUdf: result.add "import std/math\n\n"
+      hasUdf = true
+      result.add k[1].s & "\n\n"
+  for k in kernels.kids:
+    if not k.isTag("kernel"): continue
     var code = genKernel(k)
     if nimony: code = code.replace(", dynlib, cdecl", ", cdecl")
     result.add code & "\n"

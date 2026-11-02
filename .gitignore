@@ -8,3 +8,5 @@ nimcache/
 /nimony/par
 /nimony/kny.nim
 /nimony/kn2.nim
+/tests/udftest
+/src/nanuqy/nif2nim

@@ -24,6 +24,8 @@ jobs:
         run: |
           nim c -d:nanuqLib=prebuilt -o:difftest tests/difftest.nim
           for s in 1 2 3; do ./difftest $s 400; done
+      - name: Nim UDFs inlined into kernels, against mapElements
+        run: nim c -r -d:release -d:nanuqLib=prebuilt tests/udftest.nim 200000
 
   nimony:
     runs-on: ubuntu-latest

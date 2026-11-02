@@ -27,12 +27,18 @@ type
   Sem = object
     schema: seq[Input]  # columns of the frame
     used*: seq[Input]   # columns the kernel reads, in slot order
+  UdfSig* = object
+    name*: string
+    params*: seq[NqType]
+    ret*: NqType
   Kernel* = object
     nif*: Nif           # the typed `(kernel ...)` tree
     inputs*: seq[Input]
     outName*: string
     outType*: NqType
     shape*: Shape
+
+var udfSigs*: seq[UdfSig]   ## filled by the host from the {.nimKernel.} registry
 
 proc typeNode*(t: NqType): Nif =
   case t
@@ -78,6 +84,7 @@ proc outName*(n: Nif): string =
   of "col": n[0].s
   of "dynlit": "literal"
   of "alias": n[1].s
+  of "call": outName(n[1])   # the first argument, as map_elements would name it
   else: outName(n[0])
 
 proc check(s: var Sem, n: Nif): Typed =
@@ -139,6 +146,29 @@ proc check(s: var Sem, n: Nif): Typed =
             of "count", "len": tU32
             else: a.t
     Typed(n: tree(n.tag, typeNode(t), a.n), t: t, shape: shScalar)
+  of "call":
+    # a {.nimKernel.} proc: arguments are coerced to its parameter types; it
+    # runs on rows where every argument is valid (null otherwise), like Polars'
+    # map_elements, which skips nulls.
+    let name = n[0].s
+    var sig: UdfSig
+    var found = false
+    for u in udfSigs:
+      if u.name == name: sig = u; found = true
+    if not found: unsupported("unknown Nim UDF " & name)
+    if n.len - 1 != sig.params.len: unsupported("arity of " & name)
+    var r = tree("call", typeNode(sig.ret), str(name))
+    var shape = shScalar
+    for i in 1 ..< n.len:
+      let a = s.check(n[i])
+      if a.hasFilter: unsupported("filter inside a UDF call")
+      if not a.isDynLit:
+        if a.shape == shScalar: unsupported("UDF on an aggregated value")
+        shape = shColumn
+      if not a.t.isNumeric: unsupported("UDF argument of type " & $a.t)
+      r.kids.add coerce(a, sig.params[i-1])
+    if shape != shColumn: unsupported("UDF on literals only")
+    Typed(n: r, t: sig.ret, shape: shColumn)
   else:
     unsupported("tag " & n.tag)
 

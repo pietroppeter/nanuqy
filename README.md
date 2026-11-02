@@ -223,6 +223,51 @@ needs a newer clang than this sandbox has (LLVM 19 IR syntax); the native backen
 checksum. Its plugin checks statically that the loop has no data races (it rejects a write
 to `x[i]` inside a nested loop), which suits generated code.
 
+## Nim procs inside kernels (UDFs without callbacks)
+
+A Nim proc marked `{.nimKernel.}` can be called from a kernel with `nimCall`:
+
+```nim
+proc haversine(lat1, lon1, lat2, lon2: float64): float64 {.nimKernel.} =
+  ...
+df.nimSelect(nimCall("haversine", col("lat1"), col("lon1"), col("lat2"), col("lon2")).sum)
+```
+
+- The pragma keeps the proc as it is and also records its source text (`src/nanuqy/udf.nim`).
+- Polars cannot serialize a callback, so `nimCall` builds a placeholder that it can serialize:
+  `as_struct(lit("__nimudf:haversine"), args...)`.
+- polars2nif reads the placeholder as `(call "haversine" ...)`. sem converts the arguments
+  to the proc's parameter types, and the row is null if any argument is null, as with
+  Polars' `map_elements`.
+- The source travels inside the kernels NIF as `(udf "haversine" "<source>")`. nif2nim
+  puts it into the generated module as an `{.inline.}` proc, so each row is an ordinary
+  Nim call that the C compiler inlines into the fused loop
+  (`let t1 = haversine(c0[i], c1[i], c2[i], c3[i])`).
+- There is no callback, no Series copy and no lock.
+
+`tests/udftest.nim` checks four UDF kernels against the same procs run through nanuq's
+`mapElements`, with nulls and on a sliced frame. The four kernels are `m * 3.28084`, its
+sum, haversine over four columns, and a Collatz while-loop that no Polars expression can
+write. Timings on 1M rows, best of 3, with kernels already compiled and cached:
+
+| UDF | Nim kernel | mapElements | native Polars |
+|---|---:|---:|---:|
+| `m * 3.28084` | 1.4 ms | 7.3 ms | 2.8 ms |
+| haversine (4 columns) | 103 ms | 125 ms | 165 ms |
+| haversine, then sum | 77 ms | 122 ms | - |
+| Collatz steps (a while loop) | 200 ms | 285 ms | - |
+
+- Since Nanuq 0.5, `mapElements` is already fairly cheap per row. So the gain is large for
+  light procs (5x) and modest for heavy ones (1.2-1.6x), where the time goes into the
+  proc's own math.
+- The bigger gains come from fusion: a UDF followed by a sum never materializes a column.
+  The haversine kernel also beats Polars' own native trig expression, which builds an
+  intermediate column for each operation.
+- There is no Polars fallback: an expression with a UDF that the kernel subset cannot
+  handle is an error, since Polars cannot evaluate the placeholder.
+- The source travels as text. Nim's own NIF (from nifler) would be the more faithful
+  carrier and would allow checking the proc before codegen; that is a possible next step.
+
 ## Translating Polars' own Rust through NIF
 
 The kernels above are written from Polars' *documented behaviour*. Another reading of
@@ -288,12 +333,10 @@ agent can grind through with the oracle checking every step.
 
 ## Possible next steps, smallest first
 
-1. Inline Nim procs into kernels (`mapElements` without callbacks or copies), and measure
-   against the `benchmarks/map_elements.nim` numbers.
-2. Take over plan nodes: a `select`/`with_columns`/`filter` on a scan, chunked and
+1. Take over plan nodes: a `select`/`with_columns`/`filter` on a scan, chunked and
    multi-threaded, still falling back per node.
-3. Feed the typed NIF to Nimony and compare its C and native backends with `nim c`.
-4. A GPU backend through Nimony's `{.build.}` seam, for the same kernels.
+2. Feed the typed NIF to Nimony and compare its C and native backends with `nim c`.
+3. A GPU backend through Nimony's `{.build.}` seam, for the same kernels.
 
 ## Files
 
@@ -304,8 +347,10 @@ agent can grind through with the oracle checking every step.
 | `src/nanuqy/sem.nim` | typing with Polars' rules, typed NIF |
 | `src/nanuqy/nif2nim.nim` | typed NIF to a Nim module (also a stand-alone tool) |
 | `src/nanuqy/kabi.nim` | ABI and helpers shared by host and kernels |
+| `src/nanuqy/udf.nim` | `{.nimKernel.}` procs and `nimCall` |
 | `src/nanuqy/jit.nim` | compile, cache, load, run on Arrow buffers, `nimSelect` |
 | `tests/difftest.nim` | random differential test against Polars |
+| `tests/udftest.nim` | Nim UDF kernels vs mapElements: correctness and timings |
 | `bench/bench.nim` | timings against Polars |
 | `tools/explain.nim`, `tools/demo.nim` | look at each step |
 | `nimony/` | the kernels through Nimony |

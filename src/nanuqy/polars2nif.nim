@@ -6,8 +6,10 @@
 ##   {"Agg":{"Sum":{"BinaryExpr":{"left":{"Column":"a"},"op":"Multiply",...}}}}
 ##   ==>  (sum (mul (col "a") 2))
 
-import std/json
+import std/[json, strutils]
 import nif
+
+const UdfMarker* = "__nimudf:"  # see udf.nim
 
 type Unsupported* = object of CatchableError
 
@@ -47,6 +49,16 @@ proc toNif*(j: JsonNode): Nif =
   of "Function":
     let fname = v["function"]
     if fname.kind != JString: unsupported("function " & $fname)
+    if fname.getStr == "AsStruct" and v["input"].len >= 1:
+      # nimCall's placeholder: as_struct(lit("__nimudf:name"), args...)
+      let first = v["input"][0]
+      if first.hasKey("Literal") and first["Literal"].hasKey("Scalar") and
+         first["Literal"]["Scalar"].hasKey("String"):
+        let marker = first["Literal"]["Scalar"]["String"].getStr
+        if marker.startsWith(UdfMarker):
+          result = tree("call", str(marker[UdfMarker.len .. ^1]))
+          for i in 1 ..< v["input"].len: result.kids.add toNif(v["input"][i])
+          return
     let tag = case fname.getStr
               of "Negate": "neg"
               of "Abs": "abs"

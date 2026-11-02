@@ -12,3 +12,6 @@ task difftest, "Differential test against Polars (seed, count)":
 
 task bench, "Benchmark against Polars on 10M rows":
   exec "nim c -r -d:release -d:nanuqLib=prebuilt bench/bench.nim"
+
+task udftest, "Nim UDFs inlined into kernels vs mapElements (rows)":
+  exec "nim c -r -d:release -d:nanuqLib=prebuilt tests/udftest.nim 1000000"
