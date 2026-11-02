@@ -29,11 +29,17 @@ proc run(cmd: string): string =
   output
 
 proc excerpt(path, marker: string, before, after: int): string =
-  ## the lines around the first line containing `marker`
+  ## the lines around the first line containing `marker`, shifted left: the
+  ## statement sits deep inside the file's tree (File, items, fn, block,
+  ## while, body, ...), and each level of nesting adds indentation
   let lines = readFile(path).splitLines
   for i, l in lines:
     if marker in l:
-      return lines[max(0, i - before) .. min(lines.high, i + after)].join("\n")
+      let part = lines[max(0, i - before) .. min(lines.high, i + after)]
+      var cut = high(int)
+      for x in part:
+        if x.strip.len > 0: cut = min(cut, x.len - x.strip(trailing = false).len)
+      return part.mapIt(if it.len >= cut: it[cut .. ^1] else: it.strip).join("\n")
   "(marker not found)"
 
 proc lineCount(path: string): int = readFile(path).strip.splitLines.len
@@ -80,7 +86,10 @@ nbText: """
 
 The only Rust in the pipeline is `rs2nif`, six lines that call
 [syn](https://docs.rs/syn) (the parser Rust macros use) and print its tree with
-`{:#?}`. We follow one statement, `width /= 2;`, through every step.
+`{:#?}`. We follow one statement, `width /= 2;`, through every step. The statement
+sits about ten levels deep in the file's tree (file, items, function, body, while,
+for body, ...), so the excerpts below are shifted left; the closing brackets at the
+end of each excerpt close those outer levels.
 """
 
 nbCode:
