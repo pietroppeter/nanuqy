@@ -1,0 +1,110 @@
+(.nif27)
+(.vendor "nanuq")
+(.lang "nq-query")
+(kernels
+  (kernel
+    :k0.0.nq
+    (name "a")
+    (shape scalar)
+    (inputs
+      (input 0 "a" (i 64) nullable)
+      (input 1 "b" (f 64) notnull))
+    (sum
+      (f 64)
+      (add
+        (f 64)
+        (conv
+          (f 64)
+          (mul
+            (i 64)
+            (col (i 64) 0 "a" nullable)
+            (lit (i 64) 2)))
+        (col (f 64) 1 "b" notnull))))
+  (kernel
+    :k1.0.nq
+    (name "a")
+    (shape scalar)
+    (inputs
+      (input 0 "a" (i 64) nullable)
+      (input 1 "b" (f 64) notnull))
+    (mean
+      (f 64)
+      (filter
+        (i 64)
+        (col (i 64) 0 "a" nullable)
+        (gt
+          (bool)
+          (col (f 64) 1 "b" notnull)
+          (lit (f 64) 0.0)))))
+  (kernel
+    :k2.0.nq
+    (name "a")
+    (shape scalar)
+    (inputs
+      (input 0 "a" (i 64) nullable)
+      (input 1 "b" (f 64) notnull))
+    (div
+      (f 64)
+      (conv
+        (f 64)
+        (sum
+          (i 64)
+          (col (i 64) 0 "a" nullable)))
+      (mean
+        (f 64)
+        (col (f 64) 1 "b" notnull))))
+  (kernel
+    :k3.0.nq
+    (name "b")
+    (shape scalar)
+    (inputs
+      (input 0 "b" (f 64) notnull)
+      (input 1 "a" (i 64) nullable))
+    (count
+      (u 32)
+      (filter
+        (f 64)
+        (col (f 64) 0 "b" notnull)
+        (and
+          (bool)
+          (gt
+            (bool)
+            (col (i 64) 1 "a" nullable)
+            (lit (i 64) 10))
+          (lt
+            (bool)
+            (col (f 64) 0 "b" notnull)
+            (lit (f 64) 0.5))))))
+  (kernel
+    :k4.0.nq
+    (name "a")
+    (shape column)
+    (inputs
+      (input 0 "a" (i 64) nullable)
+      (input 1 "b" (f 64) notnull))
+    (add
+      (f 64)
+      (conv
+        (f 64)
+        (mul
+          (i 64)
+          (col (i 64) 0 "a" nullable)
+          (lit (i 64) 2)))
+      (col (f 64) 1 "b" notnull)))
+  (kernel
+    :k5.0.nq
+    (name "a")
+    (shape column)
+    (inputs
+      (input 0 "a" (i 64) nullable)
+      (input 1 "b" (f 64) notnull))
+    (or
+      (bool)
+      (gt
+        (bool)
+        (col (i 64) 0 "a" nullable)
+        (lit (i 64) 0))
+      (lt
+        (bool)
+        (col (f 64) 1 "b" notnull)
+        (lit (f 64) 0.0)))))

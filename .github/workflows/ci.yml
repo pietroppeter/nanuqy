@@ -1,0 +1,48 @@
+name: ci
+# The differential test against Polars (through Nanuq's prebuilt library) and
+# the Nimony build of the benchmark kernels. Markdown-only changes skip CI.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "LICENSE", ".gitignore"]
+  pull_request:
+    paths-ignore: ["**.md", "LICENSE", ".gitignore"]
+  workflow_dispatch:
+
+jobs:
+  difftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nim 2.2.4
+        run: |
+          curl -sSL https://nim-lang.org/download/nim-2.2.4-linux_x64.tar.xz | tar xJ -C $HOME
+          echo "$HOME/nim-2.2.4/bin" >> $GITHUB_PATH
+      - name: Check out Nanuq next to nanuqy
+        run: git clone --depth 1 --branch v0.6.0 https://github.com/pietroppeter/nanuq ../nanuq
+      - name: Differential test (3 seeds)
+        run: |
+          nim c -d:nanuqLib=prebuilt -o:difftest tests/difftest.nim
+          for s in 1 2 3; do ./difftest $s 400; done
+
+  nimony:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nim 2.2.4
+        run: |
+          curl -sSL https://nim-lang.org/download/nim-2.2.4-linux_x64.tar.xz | tar xJ -C $HOME
+          echo "$HOME/nim-2.2.4/bin" >> $GITHUB_PATH
+      - name: Build Nimony
+        run: |
+          git clone --depth 1 https://github.com/nim-lang/nimony $HOME/nimony
+          cd $HOME/nimony && nim c -r src/hastur/hastur build all
+          echo "$HOME/nimony/bin" >> $GITHUB_PATH
+      - name: Same kernels, Nim 2 and Nimony
+        run: |
+          nim c -r --hints:off src/nanuqy/nif2nim.nim --nimony nimony/bench_kernels.nif > nimony/kny.nim
+          nim c -r --hints:off src/nanuqy/nif2nim.nim nimony/bench_kernels.nif > nimony/kn2.nim
+          cd nimony
+          nim c -r -d:danger --hints:off -o:h2 harness.nim | tee nim2.out
+          nimony c -r -d:danger harness.nim | tee nimony.out
+          diff <(sed 's/ms=[0-9.]* //' nim2.out) <(sed 's/ms=[0-9.]* //' nimony.out)

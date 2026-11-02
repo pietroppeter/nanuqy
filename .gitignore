@@ -1,0 +1,10 @@
+nimcache/
+*.out
+/tests/difftest
+/bench/bench
+/tools/explain
+/tools/demo
+/nimony/harness
+/nimony/par
+/nimony/kny.nim
+/nimony/kn2.nim
