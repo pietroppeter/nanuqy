@@ -1,0 +1,13 @@
+nimcache/
+*.out
+/tests/difftest
+/bench/bench
+/tools/explain
+/tools/demo
+/nimony/harness
+/nimony/par
+/nimony/kny.nim
+/nimony/kn2.nim
+/tests/udftest
+/src/nanuqy/nif2nim
+/docs/poc.html

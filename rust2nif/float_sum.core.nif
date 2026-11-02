@@ -1,0 +1,2717 @@
+(.nif27)
+(.vendor "nanuq")
+(.lang "rust-core")
+(File
+  (items
+    (ItemUse
+      (tree
+        (UsePath
+          (ident std)
+          (tree
+            (UsePath
+              (ident ops)
+              (tree
+                (UseGroup
+                  (items
+                    (UseName
+                      (ident Add))
+                    (UseName
+                      (ident IndexMut))))))))))
+    (ItemUse
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (tree
+        (UsePath
+          (ident std)
+          (tree
+            (UsePath
+              (ident simd)
+              (tree
+                (UseGroup
+                  (items
+                    (UsePath
+                      (ident prelude)
+                      (tree (UseGlob)))
+                    (UseGlob)))))))))
+    (ItemUse
+      (tree
+        (UsePath
+          (ident num_traits)
+          (tree
+            (UseGroup
+              (items
+                (UseName
+                  (ident AsPrimitive))
+                (UseName
+                  (ident Float))))))))
+    (ItemUse
+      (tree
+        (UsePath
+          (ident polars_arrow)
+          (tree
+            (UsePath
+              (ident array)
+              (tree
+                (UseGroup
+                  (items
+                    (UseName
+                      (ident Array))
+                    (UseName
+                      (ident PrimitiveArray))))))))))
+    (ItemUse
+      (tree
+        (UsePath
+          (ident polars_arrow)
+          (tree
+            (UsePath
+              (ident bitmap)
+              (tree
+                (UseName
+                  (ident Bitmap))))))))
+    (ItemUse
+      (tree
+        (UsePath
+          (ident polars_arrow)
+          (tree
+            (UsePath
+              (ident bitmap)
+              (tree
+                (UsePath
+                  (ident bitmask)
+                  (tree
+                    (UseName
+                      (ident BitMask))))))))))
+    (ItemUse
+      (tree
+        (UsePath
+          (ident polars_arrow)
+          (tree
+            (UsePath
+              (ident types)
+              (tree
+                (UseName
+                  (ident NativeType))))))))
+    (ItemUse
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (tree
+        (UsePath
+          (ident polars_utils)
+          (tree
+            (UsePath
+              (ident float16)
+              (tree
+                (UseName
+                  (ident pf16))))))))
+    (ItemConst
+      (ident STRIPE)
+      (generics (Generics))
+      (ty usize)
+      (expr
+        (ExprLit
+          (lit
+            (LitInt
+              (token "16"))))))
+    (ItemConst
+      (ident PAIRWISE_RECURSION_LIMIT)
+      (generics (Generics))
+      (ty usize)
+      (expr
+        (ExprLit
+          (lit
+            (LitInt
+              (token "128"))))))
+    (ItemTrait
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (vis (VisibilityPublic))
+      (ident SimdCastGeneric)
+      (generics
+        (Generics
+          (params
+            (ConstParam
+              (ident N)
+              (ty usize)))))
+      (items
+        (TraitItemFn
+          (sig
+            (Signature
+              (ident cast_generic)
+              (generics
+                (Generics
+                  (params
+                    (TypeParam
+                      (ident U)
+                      (bounds
+                        (TraitBound
+                          (path SimdCast)))))))
+              (inputs
+                (Receiver
+                  (ty Self)))
+              (output
+                (qpath
+                  (generic Simd U N))))))))
+    (ItemMacro
+      (ident impl_cast_custom)
+      (mac
+        (Macro
+          (path macro_rules)
+          (delimiter (MacroDelimiterBrace))
+          (tokens
+            (TokenStream
+              (Group
+                (stream
+                  (TokenStream
+                    (Punct
+                      (char "$"))
+                    _type
+                    (Punct
+                      (char ":"))
+                    ty)))
+              (Punct
+                (char "="))
+              (Punct
+                (char ">"))
+              (Group
+                (stream
+                  (TokenStream
+                    (Punct
+                      (char "#"))
+                    (Group
+                      (stream
+                        (TokenStream
+                          cfg
+                          (Group
+                            (stream
+                              (TokenStream
+                                feature
+                                (Punct
+                                  (char "="))
+                                (Literal
+                                  (lit "simd"))))))))
+                    impl
+                    (Punct
+                      (char "<"))
+                    const
+                    N
+                    (Punct
+                      (char ":"))
+                    usize
+                    (Punct
+                      (char ">"))
+                    SimdCastGeneric
+                    (Punct
+                      (char "<"))
+                    N
+                    (Punct
+                      (char ">"))
+                    for
+                    Simd
+                    (Punct
+                      (char "<"))
+                    (Punct
+                      (char "$"))
+                    _type
+                    (Punct
+                      (char ","))
+                    N
+                    (Punct
+                      (char ">"))
+                    (Group
+                      (stream
+                        (TokenStream
+                          (Punct
+                            (char "#"))
+                          (Group
+                            (stream
+                              (TokenStream inline)))
+                          fn
+                          cast_generic
+                          (Punct
+                            (char "<"))
+                          U
+                          (Punct
+                            (char ":"))
+                          SimdCast
+                          (Punct
+                            (char ">"))
+                          (Group
+                            (stream
+                              (TokenStream self)))
+                          (Punct
+                            (char "-"))
+                          (Punct
+                            (char ">"))
+                          Simd
+                          (Punct
+                            (char "<"))
+                          U
+                          (Punct
+                            (char ","))
+                          N
+                          (Punct
+                            (char ">"))
+                          (Group
+                            (stream
+                              (TokenStream
+                                self
+                                (Punct
+                                  (char "."))
+                                cast
+                                (Punct
+                                  (char ":"))
+                                (Punct
+                                  (char ":"))
+                                (Punct
+                                  (char "<"))
+                                U
+                                (Punct
+                                  (char ">"))
+                                (Group
+                                  (stream (TokenStream))))))))))))
+              (Punct
+                (char ";")))))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream u8)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream u16)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream u32)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream u64)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream i8)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream i16)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream i32)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream i64)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream f32)))))
+    (ItemMacro
+      (mac
+        (Macro
+          (path impl_cast_custom)
+          (delimiter (MacroDelimiterParen))
+          (tokens
+            (TokenStream f64)))))
+    (ItemFn
+      (sig
+        (Signature
+          (ident vector_horizontal_sum)
+          (generics
+            (Generics
+              (params
+                (TypeParam
+                  (ident V))
+                (TypeParam
+                  (ident T)))
+              (where_clause
+                (WhereClause
+                  (predicates
+                    (PredicateType
+                      (bounded_ty V)
+                      (bounds
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic
+                                IndexMut
+                                usize
+                                (AssocType
+                                  (ident Output)
+                                  (ty T))))))))
+                    (PredicateType
+                      (bounded_ty T)
+                      (bounds
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic
+                                Add
+                                T
+                                (AssocType
+                                  (ident Output)
+                                  (ty T))))))
+                        (TraitBound
+                          (path Sized))
+                        (TraitBound
+                          (path Copy)))))))))
+          (inputs
+            (PatType
+              (pat
+                (PatIdent
+                  (mutability mut)
+                  (ident v)))
+              (ty V)))
+          (output T)))
+      (block
+        (Block
+          (stmts
+            (StmtLocal
+              (pat
+                (PatIdent
+                  (mutability mut)
+                  (ident width)))
+              (init
+                (LocalInit
+                  (expr STRIPE))))
+            (StmtExpr
+              (ExprWhile
+                (cond
+                  (ExprBinary
+                    (left width)
+                    (op (BinOpGt))
+                    (right
+                      (ExprLit
+                        (lit
+                          (LitInt
+                            (token "4")))))))
+                (body
+                  (Block
+                    (stmts
+                      (StmtExpr
+                        (ExprForLoop
+                          (pat
+                            (PatIdent
+                              (ident j)))
+                          (expr
+                            (ExprRange
+                              (start
+                                (ExprLit
+                                  (lit
+                                    (LitInt
+                                      (token "0")))))
+                              (limits (RangeLimitsHalfOpen))
+                              (end
+                                (ExprBinary
+                                  (left width)
+                                  (op (BinOpDiv))
+                                  (right
+                                    (ExprLit
+                                      (lit
+                                        (LitInt
+                                          (token "2")))))))))
+                          (body
+                            (Block
+                              (stmts
+                                (StmtExpr
+                                  (ExprAssign
+                                    (left
+                                      (ExprIndex
+                                        (expr v)
+                                        (index j)))
+                                    (right
+                                      (ExprBinary
+                                        (left
+                                          (ExprIndex
+                                            (expr v)
+                                            (index j)))
+                                        (op (BinOpAdd))
+                                        (right
+                                          (ExprIndex
+                                            (expr v)
+                                            (index
+                                              (ExprBinary
+                                                (left
+                                                  (ExprBinary
+                                                    (left width)
+                                                    (op (BinOpDiv))
+                                                    (right
+                                                      (ExprLit
+                                                        (lit
+                                                          (LitInt
+                                                            (token "2")))))))
+                                                (op (BinOpAdd))
+                                                (right j))))))))
+                                  semi))))))
+                      (StmtExpr
+                        (ExprBinary
+                          (left width)
+                          (op (BinOpDivAssign))
+                          (right
+                            (ExprLit
+                              (lit
+                                (LitInt
+                                  (token "2"))))))
+                        semi))))))
+            (StmtExpr
+              (ExprBinary
+                (left
+                  (ExprParen
+                    (expr
+                      (ExprBinary
+                        (left
+                          (ExprIndex
+                            (expr v)
+                            (index
+                              (ExprLit
+                                (lit
+                                  (LitInt
+                                    (token "0")))))))
+                        (op (BinOpAdd))
+                        (right
+                          (ExprIndex
+                            (expr v)
+                            (index
+                              (ExprLit
+                                (lit
+                                  (LitInt
+                                    (token "2")))))))))))
+                (op (BinOpAdd))
+                (right
+                  (ExprParen
+                    (expr
+                      (ExprBinary
+                        (left
+                          (ExprIndex
+                            (expr v)
+                            (index
+                              (ExprLit
+                                (lit
+                                  (LitInt
+                                    (token "1")))))))
+                        (op (BinOpAdd))
+                        (right
+                          (ExprIndex
+                            (expr v)
+                            (index
+                              (ExprLit
+                                (lit
+                                  (LitInt
+                                    (token "3")))))))))))))))))
+    (ItemTrait
+      (vis (VisibilityPublic))
+      (ident SumBlock)
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident F)))))
+      (items
+        (TraitItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self)))))
+              (output F))))
+        (TraitItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized_with_mask)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (ty
+                    (qpath
+                      (generic
+                        BitMask
+                        (Lifetime
+                          (ident _)))))))
+              (output F))))))
+    (ItemImpl
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident T))
+            (TypeParam
+              (ident F)))
+          (where_clause
+            (WhereClause
+              (predicates
+                (PredicateType
+                  (bounded_ty T)
+                  (bounds
+                    (TraitBound
+                      (path SimdElement))))
+                (PredicateType
+                  (bounded_ty F)
+                  (bounds
+                    (TraitBound
+                      (path SimdElement))
+                    (TraitBound
+                      (path SimdCast))
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic
+                            Add
+                            (AssocType
+                              (ident Output)
+                              (ty F))))))
+                    (TraitBound
+                      (path Default))))
+                (PredicateType
+                  (bounded_ty
+                    (qpath
+                      (generic Simd T STRIPE)))
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic SimdCastGeneric STRIPE))))))
+                (PredicateType
+                  (bounded_ty
+                    (qpath
+                      (generic Simd F STRIPE)))
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath std iter Sum))))))))))
+      (trait_
+        (tuple
+          (qpath
+            (generic SumBlock F))))
+      (self_ty
+        (TypeArray
+          (elem T)
+          (len PAIRWISE_RECURSION_LIMIT)))
+      (items
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self)))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident vsum)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver
+                            (ExprMethodCall
+                              (receiver
+                                (ExprMethodCall
+                                  (receiver
+                                    (ExprField
+                                      (base
+                                        (ExprMethodCall
+                                          (receiver self)
+                                          (method as_chunks)
+                                          (turbofish
+                                            (AngleBracketedGenericArguments
+                                              (args STRIPE)))))
+                                      (member
+                                        (Index
+                                          (index "0")))))
+                                  (method iter)))
+                              (method map)
+                              (args
+                                (ExprClosure
+                                  (inputs
+                                    (PatIdent
+                                      (ident a)))
+                                  (body
+                                    (ExprMethodCall
+                                      (receiver
+                                        (ExprCall
+                                          (func
+                                            (qpath
+                                              (generic Simd T STRIPE)
+                                              from_slice))
+                                          (args a)))
+                                      (method cast_generic)
+                                      (turbofish
+                                        (AngleBracketedGenericArguments
+                                          (args F)))))))))
+                          (method sum)
+                          (turbofish
+                            (AngleBracketedGenericArguments
+                              (args
+                                (qpath
+                                  (generic Simd F STRIPE))))))))))
+                (StmtExpr
+                  (ExprCall
+                    (func vector_horizontal_sum)
+                    (args vsum)))))))
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized_with_mask)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (ty
+                    (qpath
+                      (generic
+                        BitMask
+                        (Lifetime
+                          (ident _)))))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident zero)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprCall
+                          (func
+                            (qpath Simd default)))))))
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident vsum)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver
+                            (ExprMethodCall
+                              (receiver
+                                (ExprMethodCall
+                                  (receiver
+                                    (ExprMethodCall
+                                      (receiver
+                                        (ExprField
+                                          (base
+                                            (ExprMethodCall
+                                              (receiver self)
+                                              (method as_chunks)
+                                              (turbofish
+                                                (AngleBracketedGenericArguments
+                                                  (args STRIPE)))))
+                                          (member
+                                            (Index
+                                              (index "0")))))
+                                      (method iter)))
+                                  (method enumerate)))
+                              (method map)
+                              (args
+                                (ExprClosure
+                                  (inputs
+                                    (PatTuple
+                                      (elems
+                                        (PatIdent
+                                          (ident i))
+                                        (PatIdent
+                                          (ident a)))))
+                                  (body
+                                    (ExprBlock
+                                      (block
+                                        (Block
+                                          (stmts
+                                            (StmtLocal
+                                              (pat
+                                                (PatType
+                                                  (pat
+                                                    (PatIdent
+                                                      (ident m)))
+                                                  (ty
+                                                    (qpath
+                                                      (generic
+                                                        Mask
+                                                        (qpath T Mask)
+                                                        STRIPE)))))
+                                              (init
+                                                (LocalInit
+                                                  (expr
+                                                    (ExprMethodCall
+                                                      (receiver mask)
+                                                      (method get_simd)
+                                                      (args
+                                                        (ExprBinary
+                                                          (left i)
+                                                          (op (BinOpMul))
+                                                          (right STRIPE))))))))
+                                            (StmtExpr
+                                              (ExprMethodCall
+                                                (receiver m)
+                                                (method select)
+                                                (args
+                                                  (ExprMethodCall
+                                                    (receiver
+                                                      (ExprCall
+                                                        (func
+                                                          (qpath Simd from_slice))
+                                                        (args a)))
+                                                    (method cast_generic)
+                                                    (turbofish
+                                                      (AngleBracketedGenericArguments
+                                                        (args F))))
+                                                  zero))))))))))))
+                          (method sum)
+                          (turbofish
+                            (AngleBracketedGenericArguments
+                              (args
+                                (qpath
+                                  (generic Simd F STRIPE))))))))))
+                (StmtExpr
+                  (ExprCall
+                    (func vector_horizontal_sum)
+                    (args vsum)))))))))
+    (ItemImpl
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident F)))
+          (where_clause
+            (WhereClause
+              (predicates
+                (PredicateType
+                  (bounded_ty i128)
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic AsPrimitive F))))))
+                (PredicateType
+                  (bounded_ty F)
+                  (bounds
+                    (TraitBound
+                      (path Float))
+                    (TraitBound
+                      (path
+                        (qpath std iter Sum)))
+                    (TypeParamBoundLifetime
+                      (ident static)))))))))
+      (trait_
+        (tuple
+          (qpath
+            (generic SumBlock F))))
+      (self_ty
+        (TypeArray
+          (elem i128)
+          (len PAIRWISE_RECURSION_LIMIT)))
+      (items
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self)))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtExpr
+                  (ExprMethodCall
+                    (receiver
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver self)
+                            (method iter)))
+                        (method map)
+                        (args
+                          (ExprClosure
+                            (inputs
+                              (PatIdent
+                                (ident x)))
+                            (body
+                              (ExprMethodCall
+                                (receiver x)
+                                (method as_)))))))
+                    (method sum)))))))
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized_with_mask)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (ty
+                    (qpath
+                      (generic
+                        BitMask
+                        (Lifetime
+                          (ident _)))))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtExpr
+                  (ExprMethodCall
+                    (receiver
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver
+                              (ExprMethodCall
+                                (receiver self)
+                                (method iter)))
+                            (method enumerate)))
+                        (method map)
+                        (args
+                          (ExprClosure
+                            (inputs
+                              (PatTuple
+                                (elems
+                                  (PatIdent
+                                    (ident idx))
+                                  (PatIdent
+                                    (ident x)))))
+                            (body
+                              (ExprIf
+                                (cond
+                                  (ExprMethodCall
+                                    (receiver mask)
+                                    (method get)
+                                    (args idx)))
+                                (then_branch
+                                  (Block
+                                    (stmts
+                                      (StmtExpr
+                                        (ExprMethodCall
+                                          (receiver x)
+                                          (method as_))))))
+                                (else_branch
+                                  (ExprBlock
+                                    (block
+                                      (Block
+                                        (stmts
+                                          (StmtExpr
+                                            (ExprCall
+                                              (func
+                                                (qpath F zero)))))))))))))))
+                    (method sum)))))))))
+    (ItemImpl
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident F)))
+          (where_clause
+            (WhereClause
+              (predicates
+                (PredicateType
+                  (bounded_ty u128)
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic AsPrimitive F))))))
+                (PredicateType
+                  (bounded_ty F)
+                  (bounds
+                    (TraitBound
+                      (path Float))
+                    (TraitBound
+                      (path
+                        (qpath std iter Sum)))
+                    (TypeParamBoundLifetime
+                      (ident static)))))))))
+      (trait_
+        (tuple
+          (qpath
+            (generic SumBlock F))))
+      (self_ty
+        (TypeArray
+          (elem u128)
+          (len PAIRWISE_RECURSION_LIMIT)))
+      (items
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self)))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtExpr
+                  (ExprMethodCall
+                    (receiver
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver self)
+                            (method iter)))
+                        (method map)
+                        (args
+                          (ExprClosure
+                            (inputs
+                              (PatIdent
+                                (ident x)))
+                            (body
+                              (ExprMethodCall
+                                (receiver x)
+                                (method as_)))))))
+                    (method sum)))))))
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized_with_mask)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (ty
+                    (qpath
+                      (generic
+                        BitMask
+                        (Lifetime
+                          (ident _)))))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtExpr
+                  (ExprMethodCall
+                    (receiver
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver
+                              (ExprMethodCall
+                                (receiver self)
+                                (method iter)))
+                            (method enumerate)))
+                        (method map)
+                        (args
+                          (ExprClosure
+                            (inputs
+                              (PatTuple
+                                (elems
+                                  (PatIdent
+                                    (ident idx))
+                                  (PatIdent
+                                    (ident x)))))
+                            (body
+                              (ExprIf
+                                (cond
+                                  (ExprMethodCall
+                                    (receiver mask)
+                                    (method get)
+                                    (args idx)))
+                                (then_branch
+                                  (Block
+                                    (stmts
+                                      (StmtExpr
+                                        (ExprMethodCall
+                                          (receiver x)
+                                          (method as_))))))
+                                (else_branch
+                                  (ExprBlock
+                                    (block
+                                      (Block
+                                        (stmts
+                                          (StmtExpr
+                                            (ExprCall
+                                              (func
+                                                (qpath F zero)))))))))))))))
+                    (method sum)))))))))
+    (ItemImpl
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  feature
+                  (Punct
+                    (char "="))
+                  (Literal
+                    (lit "simd"))))))))
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident F)))
+          (where_clause
+            (WhereClause
+              (predicates
+                (PredicateType
+                  (bounded_ty pf16)
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic AsPrimitive F))))))
+                (PredicateType
+                  (bounded_ty F)
+                  (bounds
+                    (TraitBound
+                      (path Float))
+                    (TraitBound
+                      (path
+                        (qpath std iter Sum)))
+                    (TypeParamBoundLifetime
+                      (ident static)))))))))
+      (trait_
+        (tuple
+          (qpath
+            (generic SumBlock F))))
+      (self_ty
+        (TypeArray
+          (elem pf16)
+          (len PAIRWISE_RECURSION_LIMIT)))
+      (items
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self)))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtExpr
+                  (ExprMethodCall
+                    (receiver
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver self)
+                            (method iter)))
+                        (method map)
+                        (args
+                          (ExprClosure
+                            (inputs
+                              (PatIdent
+                                (ident x)))
+                            (body
+                              (ExprMethodCall
+                                (receiver x)
+                                (method as_)))))))
+                    (method sum)))))))
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized_with_mask)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (ty
+                    (qpath
+                      (generic
+                        BitMask
+                        (Lifetime
+                          (ident _)))))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtExpr
+                  (ExprMethodCall
+                    (receiver
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver
+                              (ExprMethodCall
+                                (receiver self)
+                                (method iter)))
+                            (method enumerate)))
+                        (method map)
+                        (args
+                          (ExprClosure
+                            (inputs
+                              (PatTuple
+                                (elems
+                                  (PatIdent
+                                    (ident idx))
+                                  (PatIdent
+                                    (ident x)))))
+                            (body
+                              (ExprIf
+                                (cond
+                                  (ExprMethodCall
+                                    (receiver mask)
+                                    (method get)
+                                    (args idx)))
+                                (then_branch
+                                  (Block
+                                    (stmts
+                                      (StmtExpr
+                                        (ExprMethodCall
+                                          (receiver x)
+                                          (method as_))))))
+                                (else_branch
+                                  (ExprBlock
+                                    (block
+                                      (Block
+                                        (stmts
+                                          (StmtExpr
+                                            (ExprCall
+                                              (func
+                                                (qpath F zero)))))))))))))))
+                    (method sum)))))))))
+    (ItemImpl
+      (attrs
+        (Attribute
+          (meta
+            (MetaList
+              (path cfg)
+              (delimiter (MacroDelimiterParen))
+              (tokens
+                (TokenStream
+                  not
+                  (Group
+                    (stream
+                      (TokenStream
+                        feature
+                        (Punct
+                          (char "="))
+                        (Literal
+                          (lit "simd")))))))))))
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident T))
+            (TypeParam
+              (ident F)))
+          (where_clause
+            (WhereClause
+              (predicates
+                (PredicateType
+                  (bounded_ty T)
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic AsPrimitive F))))
+                    (TypeParamBoundLifetime
+                      (ident static))))
+                (PredicateType
+                  (bounded_ty F)
+                  (bounds
+                    (TraitBound
+                      (path Default))
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic
+                            Add
+                            (AssocType
+                              (ident Output)
+                              (ty F))))))
+                    (TraitBound
+                      (path Copy))
+                    (TypeParamBoundLifetime
+                      (ident static)))))))))
+      (trait_
+        (tuple
+          (qpath
+            (generic SumBlock F))))
+      (self_ty
+        (TypeArray
+          (elem T)
+          (len PAIRWISE_RECURSION_LIMIT)))
+      (items
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self)))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (mutability mut)
+                      (ident vsum)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprRepeat
+                          (expr
+                            (ExprCall
+                              (func
+                                (qpath F default))))
+                          (len STRIPE))))))
+                (StmtExpr
+                  (ExprForLoop
+                    (pat
+                      (PatIdent
+                        (ident chunk)))
+                    (expr
+                      (ExprField
+                        (base
+                          (ExprMethodCall
+                            (receiver self)
+                            (method as_chunks)
+                            (turbofish
+                              (AngleBracketedGenericArguments
+                                (args STRIPE)))))
+                        (member
+                          (Index
+                            (index "0")))))
+                    (body
+                      (Block
+                        (stmts
+                          (StmtExpr
+                            (ExprForLoop
+                              (pat
+                                (PatIdent
+                                  (ident j)))
+                              (expr
+                                (ExprRange
+                                  (start
+                                    (ExprLit
+                                      (lit
+                                        (LitInt
+                                          (token "0")))))
+                                  (limits (RangeLimitsHalfOpen))
+                                  (end STRIPE)))
+                              (body
+                                (Block
+                                  (stmts
+                                    (StmtExpr
+                                      (ExprAssign
+                                        (left
+                                          (ExprIndex
+                                            (expr vsum)
+                                            (index j)))
+                                        (right
+                                          (ExprBinary
+                                            (left
+                                              (ExprIndex
+                                                (expr vsum)
+                                                (index j)))
+                                            (op (BinOpAdd))
+                                            (right
+                                              (ExprMethodCall
+                                                (receiver
+                                                  (ExprIndex
+                                                    (expr chunk)
+                                                    (index j)))
+                                                (method as_))))))
+                                      semi)))))))))))
+                (StmtExpr
+                  (ExprCall
+                    (func vector_horizontal_sum)
+                    (args vsum)))))))
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_block_vectorized_with_mask)
+              (generics (Generics))
+              (inputs
+                (Receiver
+                  (ty
+                    (TypeReference
+                      (elem Self))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (ty
+                    (qpath
+                      (generic
+                        BitMask
+                        (Lifetime
+                          (ident _)))))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (mutability mut)
+                      (ident vsum)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprRepeat
+                          (expr
+                            (ExprCall
+                              (func
+                                (qpath F default))))
+                          (len STRIPE))))))
+                (StmtExpr
+                  (ExprForLoop
+                    (pat
+                      (PatTuple
+                        (elems
+                          (PatIdent
+                            (ident i))
+                          (PatIdent
+                            (ident chunk)))))
+                    (expr
+                      (ExprMethodCall
+                        (receiver
+                          (ExprMethodCall
+                            (receiver
+                              (ExprField
+                                (base
+                                  (ExprMethodCall
+                                    (receiver self)
+                                    (method as_chunks)
+                                    (turbofish
+                                      (AngleBracketedGenericArguments
+                                        (args STRIPE)))))
+                                (member
+                                  (Index
+                                    (index "0")))))
+                            (method iter)))
+                        (method enumerate)))
+                    (body
+                      (Block
+                        (stmts
+                          (StmtExpr
+                            (ExprForLoop
+                              (pat
+                                (PatIdent
+                                  (ident j)))
+                              (expr
+                                (ExprRange
+                                  (start
+                                    (ExprLit
+                                      (lit
+                                        (LitInt
+                                          (token "0")))))
+                                  (limits (RangeLimitsHalfOpen))
+                                  (end STRIPE)))
+                              (body
+                                (Block
+                                  (stmts
+                                    (StmtLocal
+                                      (pat
+                                        (PatIdent
+                                          (ident addend)))
+                                      (init
+                                        (LocalInit
+                                          (expr
+                                            (ExprIf
+                                              (cond
+                                                (ExprMethodCall
+                                                  (receiver mask)
+                                                  (method get)
+                                                  (args
+                                                    (ExprBinary
+                                                      (left
+                                                        (ExprBinary
+                                                          (left i)
+                                                          (op (BinOpMul))
+                                                          (right STRIPE)))
+                                                      (op (BinOpAdd))
+                                                      (right j)))))
+                                              (then_branch
+                                                (Block
+                                                  (stmts
+                                                    (StmtExpr
+                                                      (ExprMethodCall
+                                                        (receiver
+                                                          (ExprIndex
+                                                            (expr chunk)
+                                                            (index j)))
+                                                        (method as_))))))
+                                              (else_branch
+                                                (ExprBlock
+                                                  (block
+                                                    (Block
+                                                      (stmts
+                                                        (StmtExpr
+                                                          (ExprCall
+                                                            (func
+                                                              (qpath F default))))))))))))))
+                                    (StmtExpr
+                                      (ExprAssign
+                                        (left
+                                          (ExprIndex
+                                            (expr vsum)
+                                            (index j)))
+                                        (right
+                                          (ExprBinary
+                                            (left
+                                              (ExprIndex
+                                                (expr vsum)
+                                                (index j)))
+                                            (op (BinOpAdd))
+                                            (right addend))))
+                                      semi)))))))))))
+                (StmtExpr
+                  (ExprCall
+                    (func vector_horizontal_sum)
+                    (args vsum)))))))))
+    (ItemFn
+      (attrs
+        (Attribute
+          (meta
+            (MetaNameValue
+              (path doc)
+              (value
+                (ExprLit
+                  (lit
+                    (LitStr
+                      (token " Invariant: f.len\28\29 % PAIRWISE_RECURSION_LIMIT == 0 and f.len\28\29 > 0.")))))))))
+      (sig
+        (Signature
+          (ident pairwise_sum)
+          (generics
+            (Generics
+              (params
+                (TypeParam
+                  (ident F))
+                (TypeParam
+                  (ident T)))
+              (where_clause
+                (WhereClause
+                  (predicates
+                    (PredicateType
+                      (bounded_ty
+                        (TypeArray
+                          (elem T)
+                          (len PAIRWISE_RECURSION_LIMIT)))
+                      (bounds
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic SumBlock F))))))
+                    (PredicateType
+                      (bounded_ty F)
+                      (bounds
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic
+                                Add
+                                (AssocType
+                                  (ident Output)
+                                  (ty F)))))))))))))
+          (inputs
+            (PatType
+              (pat
+                (PatIdent
+                  (ident f)))
+              (ty
+                (TypeReference
+                  (elem
+                    (TypeSlice
+                      (elem T)))))))
+          (output F)))
+      (block
+        (Block
+          (stmts
+            (StmtMacro
+              (mac
+                (Macro
+                  (path debug_assert)
+                  (delimiter (MacroDelimiterParen))
+                  (tokens
+                    (TokenStream
+                      (Punct
+                        (char "!"))
+                      f
+                      (Punct
+                        (char "."))
+                      is_empty
+                      (Group
+                        (stream (TokenStream)))
+                      (Punct
+                        (char "&"))
+                      (Punct
+                        (char "&"))
+                      f
+                      (Punct
+                        (char "."))
+                      len
+                      (Group
+                        (stream (TokenStream)))
+                      (Punct
+                        (char "."))
+                      is_multiple_of
+                      (Group
+                        (stream
+                          (TokenStream PAIRWISE_RECURSION_LIMIT))))))))
+            (StmtLocal
+              (pat
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident block)))
+                  (ty
+                    (qpath
+                      (generic
+                        Option
+                        (TypeReference
+                          (elem
+                            (TypeArray
+                              (elem T)
+                              (len PAIRWISE_RECURSION_LIMIT)))))))))
+              (init
+                (LocalInit
+                  (expr
+                    (ExprMethodCall
+                      (receiver
+                        (ExprMethodCall
+                          (receiver f)
+                          (method try_into)))
+                      (method ok))))))
+            (StmtExpr
+              (ExprIf
+                (cond
+                  (ExprLet
+                    (pat
+                      (PatTupleStruct
+                        (path Some)
+                        (elems
+                          (PatIdent
+                            (ident block)))))
+                    (expr block)))
+                (then_branch
+                  (Block
+                    (stmts
+                      (StmtExpr
+                        (ExprReturn
+                          (expr
+                            (ExprMethodCall
+                              (receiver block)
+                              (method sum_block_vectorized))))
+                        semi))))))
+            (StmtExpr
+              (ExprUnsafe
+                (block
+                  (Block
+                    (stmts
+                      (StmtLocal
+                        (pat
+                          (PatIdent
+                            (ident blocks)))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprBinary
+                                (left
+                                  (ExprMethodCall
+                                    (receiver f)
+                                    (method len)))
+                                (op (BinOpDiv))
+                                (right PAIRWISE_RECURSION_LIMIT))))))
+                      (StmtLocal
+                        (pat
+                          (PatIdent
+                            (ident left_len)))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprBinary
+                                (left
+                                  (ExprParen
+                                    (expr
+                                      (ExprBinary
+                                        (left blocks)
+                                        (op (BinOpDiv))
+                                        (right
+                                          (ExprLit
+                                            (lit
+                                              (LitInt
+                                                (token "2")))))))))
+                                (op (BinOpMul))
+                                (right PAIRWISE_RECURSION_LIMIT))))))
+                      (StmtLocal
+                        (pat
+                          (PatTuple
+                            (elems
+                              (PatIdent
+                                (ident left))
+                              (PatIdent
+                                (ident right)))))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprTuple
+                                (elems
+                                  (ExprMethodCall
+                                    (receiver f)
+                                    (method get_unchecked)
+                                    (args
+                                      (ExprRange
+                                        (limits (RangeLimitsHalfOpen))
+                                        (end left_len))))
+                                  (ExprMethodCall
+                                    (receiver f)
+                                    (method get_unchecked)
+                                    (args
+                                      (ExprRange
+                                        (start left_len)
+                                        (limits (RangeLimitsHalfOpen)))))))))))
+                      (StmtExpr
+                        (ExprBinary
+                          (left
+                            (ExprCall
+                              (func pairwise_sum)
+                              (args left)))
+                          (op (BinOpAdd))
+                          (right
+                            (ExprCall
+                              (func pairwise_sum)
+                              (args right))))))))))))))
+    (ItemFn
+      (attrs
+        (Attribute
+          (meta
+            (MetaNameValue
+              (path doc)
+              (value
+                (ExprLit
+                  (lit
+                    (LitStr
+                      (token " Invariant: f.len\28\29 % PAIRWISE_RECURSION_LIMIT == 0 and f.len\28\29 > 0."))))))))
+        (Attribute
+          (meta
+            (MetaNameValue
+              (path doc)
+              (value
+                (ExprLit
+                  (lit
+                    (LitStr
+                      (token " Also, f.len\28\29 == mask.len\28\29.")))))))))
+      (sig
+        (Signature
+          (ident pairwise_sum_with_mask)
+          (generics
+            (Generics
+              (params
+                (TypeParam
+                  (ident F))
+                (TypeParam
+                  (ident T)))
+              (where_clause
+                (WhereClause
+                  (predicates
+                    (PredicateType
+                      (bounded_ty
+                        (TypeArray
+                          (elem T)
+                          (len PAIRWISE_RECURSION_LIMIT)))
+                      (bounds
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic SumBlock F))))))
+                    (PredicateType
+                      (bounded_ty F)
+                      (bounds
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic
+                                Add
+                                (AssocType
+                                  (ident Output)
+                                  (ty F)))))))))))))
+          (inputs
+            (PatType
+              (pat
+                (PatIdent
+                  (ident f)))
+              (ty
+                (TypeReference
+                  (elem
+                    (TypeSlice
+                      (elem T))))))
+            (PatType
+              (pat
+                (PatIdent
+                  (ident mask)))
+              (ty
+                (qpath
+                  (generic
+                    BitMask
+                    (Lifetime
+                      (ident _)))))))
+          (output F)))
+      (block
+        (Block
+          (stmts
+            (StmtMacro
+              (mac
+                (Macro
+                  (path debug_assert)
+                  (delimiter (MacroDelimiterParen))
+                  (tokens
+                    (TokenStream
+                      (Punct
+                        (char "!"))
+                      f
+                      (Punct
+                        (char "."))
+                      is_empty
+                      (Group
+                        (stream (TokenStream)))
+                      (Punct
+                        (char "&"))
+                      (Punct
+                        (char "&"))
+                      f
+                      (Punct
+                        (char "."))
+                      len
+                      (Group
+                        (stream (TokenStream)))
+                      (Punct
+                        (char "."))
+                      is_multiple_of
+                      (Group
+                        (stream
+                          (TokenStream PAIRWISE_RECURSION_LIMIT))))))))
+            (StmtMacro
+              (mac
+                (Macro
+                  (path debug_assert)
+                  (delimiter (MacroDelimiterParen))
+                  (tokens
+                    (TokenStream
+                      f
+                      (Punct
+                        (char "."))
+                      len
+                      (Group
+                        (stream (TokenStream)))
+                      (Punct
+                        (char "="))
+                      (Punct
+                        (char "="))
+                      mask
+                      (Punct
+                        (char "."))
+                      len
+                      (Group
+                        (stream (TokenStream))))))))
+            (StmtLocal
+              (pat
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident block)))
+                  (ty
+                    (qpath
+                      (generic
+                        Option
+                        (TypeReference
+                          (elem
+                            (TypeArray
+                              (elem T)
+                              (len PAIRWISE_RECURSION_LIMIT)))))))))
+              (init
+                (LocalInit
+                  (expr
+                    (ExprMethodCall
+                      (receiver
+                        (ExprMethodCall
+                          (receiver f)
+                          (method try_into)))
+                      (method ok))))))
+            (StmtExpr
+              (ExprIf
+                (cond
+                  (ExprLet
+                    (pat
+                      (PatTupleStruct
+                        (path Some)
+                        (elems
+                          (PatIdent
+                            (ident block)))))
+                    (expr block)))
+                (then_branch
+                  (Block
+                    (stmts
+                      (StmtExpr
+                        (ExprReturn
+                          (expr
+                            (ExprMethodCall
+                              (receiver block)
+                              (method sum_block_vectorized_with_mask)
+                              (args mask))))
+                        semi))))))
+            (StmtExpr
+              (ExprUnsafe
+                (block
+                  (Block
+                    (stmts
+                      (StmtLocal
+                        (pat
+                          (PatIdent
+                            (ident blocks)))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprBinary
+                                (left
+                                  (ExprMethodCall
+                                    (receiver f)
+                                    (method len)))
+                                (op (BinOpDiv))
+                                (right PAIRWISE_RECURSION_LIMIT))))))
+                      (StmtLocal
+                        (pat
+                          (PatIdent
+                            (ident left_len)))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprBinary
+                                (left
+                                  (ExprParen
+                                    (expr
+                                      (ExprBinary
+                                        (left blocks)
+                                        (op (BinOpDiv))
+                                        (right
+                                          (ExprLit
+                                            (lit
+                                              (LitInt
+                                                (token "2")))))))))
+                                (op (BinOpMul))
+                                (right PAIRWISE_RECURSION_LIMIT))))))
+                      (StmtLocal
+                        (pat
+                          (PatTuple
+                            (elems
+                              (PatIdent
+                                (ident left))
+                              (PatIdent
+                                (ident right)))))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprTuple
+                                (elems
+                                  (ExprMethodCall
+                                    (receiver f)
+                                    (method get_unchecked)
+                                    (args
+                                      (ExprRange
+                                        (limits (RangeLimitsHalfOpen))
+                                        (end left_len))))
+                                  (ExprMethodCall
+                                    (receiver f)
+                                    (method get_unchecked)
+                                    (args
+                                      (ExprRange
+                                        (start left_len)
+                                        (limits (RangeLimitsHalfOpen)))))))))))
+                      (StmtLocal
+                        (pat
+                          (PatTuple
+                            (elems
+                              (PatIdent
+                                (ident left_mask))
+                              (PatIdent
+                                (ident right_mask)))))
+                        (init
+                          (LocalInit
+                            (expr
+                              (ExprMethodCall
+                                (receiver mask)
+                                (method split_at_unchecked)
+                                (args left_len))))))
+                      (StmtExpr
+                        (ExprBinary
+                          (left
+                            (ExprCall
+                              (func pairwise_sum_with_mask)
+                              (args left left_mask)))
+                          (op (BinOpAdd))
+                          (right
+                            (ExprCall
+                              (func pairwise_sum_with_mask)
+                              (args right right_mask))))))))))))))
+    (ItemTrait
+      (vis (VisibilityPublic))
+      (ident FloatSum)
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident F)))))
+      (supertraits
+        (TraitBound
+          (path Sized)))
+      (items
+        (TraitItemFn
+          (sig
+            (Signature
+              (ident sum)
+              (generics (Generics))
+              (inputs
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident f)))
+                  (ty
+                    (TypeReference
+                      (elem
+                        (TypeSlice
+                          (elem Self)))))))
+              (output F))))
+        (TraitItemFn
+          (sig
+            (Signature
+              (ident sum_with_validity)
+              (generics (Generics))
+              (inputs
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident f)))
+                  (ty
+                    (TypeReference
+                      (elem
+                        (TypeSlice
+                          (elem Self))))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident validity)))
+                  (ty
+                    (TypeReference
+                      (elem Bitmap)))))
+              (output F))))))
+    (ItemImpl
+      (generics
+        (Generics
+          (params
+            (TypeParam
+              (ident T))
+            (TypeParam
+              (ident F)))
+          (where_clause
+            (WhereClause
+              (predicates
+                (PredicateType
+                  (bounded_ty F)
+                  (bounds
+                    (TraitBound
+                      (path Float))
+                    (TraitBound
+                      (path
+                        (qpath std iter Sum)))
+                    (TypeParamBoundLifetime
+                      (ident static))))
+                (PredicateType
+                  (bounded_ty T)
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic AsPrimitive F))))))
+                (PredicateType
+                  (bounded_ty
+                    (TypeArray
+                      (elem T)
+                      (len PAIRWISE_RECURSION_LIMIT)))
+                  (bounds
+                    (TraitBound
+                      (path
+                        (qpath
+                          (generic SumBlock F)))))))))))
+      (trait_
+        (tuple
+          (qpath
+            (generic FloatSum F))))
+      (self_ty T)
+      (items
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum)
+              (generics (Generics))
+              (inputs
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident f)))
+                  (ty
+                    (TypeReference
+                      (elem
+                        (TypeSlice
+                          (elem Self)))))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident remainder)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprBinary
+                          (left
+                            (ExprMethodCall
+                              (receiver f)
+                              (method len)))
+                          (op (BinOpRem))
+                          (right PAIRWISE_RECURSION_LIMIT))))))
+                (StmtLocal
+                  (pat
+                    (PatTuple
+                      (elems
+                        (PatIdent
+                          (ident rest))
+                        (PatIdent
+                          (ident main)))))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver f)
+                          (method split_at)
+                          (args remainder))))))
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident mainsum)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprIf
+                          (cond
+                            (ExprBinary
+                              (left
+                                (ExprMethodCall
+                                  (receiver f)
+                                  (method len)))
+                              (op (BinOpGt))
+                              (right remainder)))
+                          (then_branch
+                            (Block
+                              (stmts
+                                (StmtExpr
+                                  (ExprUnsafe
+                                    (block
+                                      (Block
+                                        (stmts
+                                          (StmtExpr
+                                            (ExprCall
+                                              (func pairwise_sum)
+                                              (args main)))))))))))
+                          (else_branch
+                            (ExprBlock
+                              (block
+                                (Block
+                                  (stmts
+                                    (StmtExpr
+                                      (ExprCall
+                                        (func
+                                          (qpath F zero))))))))))))))
+                (StmtLocal
+                  (pat
+                    (PatType
+                      (pat
+                        (PatIdent
+                          (ident restsum)))
+                      (ty F)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver
+                            (ExprMethodCall
+                              (receiver
+                                (ExprMethodCall
+                                  (receiver rest)
+                                  (method iter)))
+                              (method map)
+                              (args
+                                (ExprClosure
+                                  (inputs
+                                    (PatIdent
+                                      (ident x)))
+                                  (body
+                                    (ExprMethodCall
+                                      (receiver x)
+                                      (method as_)))))))
+                          (method sum))))))
+                (StmtExpr
+                  (ExprBinary
+                    (left mainsum)
+                    (op (BinOpAdd))
+                    (right restsum)))))))
+        (ImplItemFn
+          (sig
+            (Signature
+              (ident sum_with_validity)
+              (generics (Generics))
+              (inputs
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident f)))
+                  (ty
+                    (TypeReference
+                      (elem
+                        (TypeSlice
+                          (elem Self))))))
+                (PatType
+                  (pat
+                    (PatIdent
+                      (ident validity)))
+                  (ty
+                    (TypeReference
+                      (elem Bitmap)))))
+              (output F)))
+          (block
+            (Block
+              (stmts
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident mask)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprCall
+                          (func
+                            (qpath BitMask from_bitmap))
+                          (args validity))))))
+                (StmtMacro
+                  (mac
+                    (Macro
+                      (path assert)
+                      (delimiter (MacroDelimiterParen))
+                      (tokens
+                        (TokenStream
+                          f
+                          (Punct
+                            (char "."))
+                          len
+                          (Group
+                            (stream (TokenStream)))
+                          (Punct
+                            (char "="))
+                          (Punct
+                            (char "="))
+                          mask
+                          (Punct
+                            (char "."))
+                          len
+                          (Group
+                            (stream (TokenStream))))))))
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident remainder)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprBinary
+                          (left
+                            (ExprMethodCall
+                              (receiver f)
+                              (method len)))
+                          (op (BinOpRem))
+                          (right PAIRWISE_RECURSION_LIMIT))))))
+                (StmtLocal
+                  (pat
+                    (PatTuple
+                      (elems
+                        (PatIdent
+                          (ident rest))
+                        (PatIdent
+                          (ident main)))))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver f)
+                          (method split_at)
+                          (args remainder))))))
+                (StmtLocal
+                  (pat
+                    (PatTuple
+                      (elems
+                        (PatIdent
+                          (ident rest_mask))
+                        (PatIdent
+                          (ident main_mask)))))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver mask)
+                          (method split_at)
+                          (args remainder))))))
+                (StmtLocal
+                  (pat
+                    (PatIdent
+                      (ident mainsum)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprIf
+                          (cond
+                            (ExprBinary
+                              (left
+                                (ExprMethodCall
+                                  (receiver f)
+                                  (method len)))
+                              (op (BinOpGt))
+                              (right remainder)))
+                          (then_branch
+                            (Block
+                              (stmts
+                                (StmtExpr
+                                  (ExprUnsafe
+                                    (block
+                                      (Block
+                                        (stmts
+                                          (StmtExpr
+                                            (ExprCall
+                                              (func pairwise_sum_with_mask)
+                                              (args main main_mask)))))))))))
+                          (else_branch
+                            (ExprBlock
+                              (block
+                                (Block
+                                  (stmts
+                                    (StmtExpr
+                                      (ExprCall
+                                        (func
+                                          (qpath F zero))))))))))))))
+                (StmtLocal
+                  (pat
+                    (PatType
+                      (pat
+                        (PatIdent
+                          (ident restsum)))
+                      (ty F)))
+                  (init
+                    (LocalInit
+                      (expr
+                        (ExprMethodCall
+                          (receiver
+                            (ExprMethodCall
+                              (receiver
+                                (ExprMethodCall
+                                  (receiver
+                                    (ExprMethodCall
+                                      (receiver rest)
+                                      (method iter)))
+                                  (method enumerate)))
+                              (method map)
+                              (args
+                                (ExprClosure
+                                  (inputs
+                                    (PatTuple
+                                      (elems
+                                        (PatIdent
+                                          (ident i))
+                                        (PatIdent
+                                          (ident x)))))
+                                  (body
+                                    (ExprBlock
+                                      (block
+                                        (Block
+                                          (stmts
+                                            (StmtExpr
+                                              (ExprIf
+                                                (cond
+                                                  (ExprMethodCall
+                                                    (receiver rest_mask)
+                                                    (method get)
+                                                    (args i)))
+                                                (then_branch
+                                                  (Block
+                                                    (stmts
+                                                      (StmtExpr
+                                                        (ExprMethodCall
+                                                          (receiver x)
+                                                          (method as_))))))
+                                                (else_branch
+                                                  (ExprBlock
+                                                    (block
+                                                      (Block
+                                                        (stmts
+                                                          (StmtExpr
+                                                            (ExprCall
+                                                              (func
+                                                                (qpath F zero))))))))))))))))))))
+                          (method sum))))))
+                (StmtExpr
+                  (ExprBinary
+                    (left mainsum)
+                    (op (BinOpAdd))
+                    (right restsum)))))))))
+    (ItemFn
+      (vis (VisibilityPublic))
+      (sig
+        (Signature
+          (ident sum_arr_as_f32)
+          (generics
+            (Generics
+              (params
+                (TypeParam
+                  (ident T)))
+              (where_clause
+                (WhereClause
+                  (predicates
+                    (PredicateType
+                      (bounded_ty T)
+                      (bounds
+                        (TraitBound
+                          (path NativeType))
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic FloatSum f32)))))))))))
+          (inputs
+            (PatType
+              (pat
+                (PatIdent
+                  (ident arr)))
+              (ty
+                (TypeReference
+                  (elem
+                    (qpath
+                      (generic PrimitiveArray T)))))))
+          (output f32)))
+      (block
+        (Block
+          (stmts
+            (StmtLocal
+              (pat
+                (PatIdent
+                  (ident validity)))
+              (init
+                (LocalInit
+                  (expr
+                    (ExprMethodCall
+                      (receiver
+                        (ExprMethodCall
+                          (receiver arr)
+                          (method validity)))
+                      (method filter)
+                      (args
+                        (ExprClosure
+                          (inputs (PatWild))
+                          (body
+                            (ExprBinary
+                              (left
+                                (ExprMethodCall
+                                  (receiver arr)
+                                  (method null_count)))
+                              (op (BinOpGt))
+                              (right
+                                (ExprLit
+                                  (lit
+                                    (LitInt
+                                      (token "0"))))))))))))))
+            (StmtExpr
+              (ExprIf
+                (cond
+                  (ExprLet
+                    (pat
+                      (PatTupleStruct
+                        (path Some)
+                        (elems
+                          (PatIdent
+                            (ident mask)))))
+                    (expr validity)))
+                (then_branch
+                  (Block
+                    (stmts
+                      (StmtExpr
+                        (ExprCall
+                          (func
+                            (qpath FloatSum sum_with_validity))
+                          (args
+                            (ExprMethodCall
+                              (receiver arr)
+                              (method values))
+                            mask))))))
+                (else_branch
+                  (ExprBlock
+                    (block
+                      (Block
+                        (stmts
+                          (StmtExpr
+                            (ExprCall
+                              (func
+                                (qpath FloatSum sum))
+                              (args
+                                (ExprMethodCall
+                                  (receiver arr)
+                                  (method values))))))))))))))))
+    (ItemFn
+      (vis (VisibilityPublic))
+      (sig
+        (Signature
+          (ident sum_arr_as_f64)
+          (generics
+            (Generics
+              (params
+                (TypeParam
+                  (ident T)))
+              (where_clause
+                (WhereClause
+                  (predicates
+                    (PredicateType
+                      (bounded_ty T)
+                      (bounds
+                        (TraitBound
+                          (path NativeType))
+                        (TraitBound
+                          (path
+                            (qpath
+                              (generic FloatSum f64)))))))))))
+          (inputs
+            (PatType
+              (pat
+                (PatIdent
+                  (ident arr)))
+              (ty
+                (TypeReference
+                  (elem
+                    (qpath
+                      (generic PrimitiveArray T)))))))
+          (output f64)))
+      (block
+        (Block
+          (stmts
+            (StmtLocal
+              (pat
+                (PatIdent
+                  (ident validity)))
+              (init
+                (LocalInit
+                  (expr
+                    (ExprMethodCall
+                      (receiver
+                        (ExprMethodCall
+                          (receiver arr)
+                          (method validity)))
+                      (method filter)
+                      (args
+                        (ExprClosure
+                          (inputs (PatWild))
+                          (body
+                            (ExprBinary
+                              (left
+                                (ExprMethodCall
+                                  (receiver arr)
+                                  (method null_count)))
+                              (op (BinOpGt))
+                              (right
+                                (ExprLit
+                                  (lit
+                                    (LitInt
+                                      (token "0"))))))))))))))
+            (StmtExpr
+              (ExprIf
+                (cond
+                  (ExprLet
+                    (pat
+                      (PatTupleStruct
+                        (path Some)
+                        (elems
+                          (PatIdent
+                            (ident mask)))))
+                    (expr validity)))
+                (then_branch
+                  (Block
+                    (stmts
+                      (StmtExpr
+                        (ExprCall
+                          (func
+                            (qpath FloatSum sum_with_validity))
+                          (args
+                            (ExprMethodCall
+                              (receiver arr)
+                              (method values))
+                            mask))))))
+                (else_branch
+                  (ExprBlock
+                    (block
+                      (Block
+                        (stmts
+                          (StmtExpr
+                            (ExprCall
+                              (func
+                                (qpath FloatSum sum))
+                              (args
+                                (ExprMethodCall
+                                  (receiver arr)
+                                  (method values))))))))))))))))))
