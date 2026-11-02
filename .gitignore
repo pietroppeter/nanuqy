@@ -10,3 +10,4 @@ nimcache/
 /nimony/kn2.nim
 /tests/udftest
 /src/nanuqy/nif2nim
+/docs/poc.html

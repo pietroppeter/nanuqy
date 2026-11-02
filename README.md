@@ -354,8 +354,11 @@ agent can grind through with the oracle checking every step.
 | `bench/bench.nim` | timings against Polars |
 | `tools/explain.nim`, `tools/demo.nim` | look at each step |
 | `nimony/` | the kernels through Nimony |
+| `docs/poc.nim` | nimib proof of concept: one Polars function through every step, and a Nim UDF kernel |
 | `rust2nif/` | Polars' `float_sum.rs` through NIF to Nim, bit-exact test, coverage script |
 
 ## Explainer
+
+Proof of concept, step by step (nimib, `docs/poc.nim`): https://claude.ai/artifact/2wp7p7u68YV6Lqj9RZK9BV
 
 A walk through one query, with the NIF at each step: https://claude.ai/artifact/3pEzTXqEK9wGrDcdh3YRYQ
