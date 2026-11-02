@@ -223,6 +223,60 @@ needs a newer clang than this sandbox has (LLVM 19 IR syntax); the native backen
 checksum. Its plugin checks statically that the loop has no data races (it rejects a write
 to `x[i]` inside a nested loop), which suits generated code.
 
+## Translating Polars' own Rust through NIF
+
+The kernels above are written from Polars' *documented behaviour*. Another reading of
+Araq's suggestion is to put the *Rust source itself* into NIF and generate Nim from it.
+`rust2nif/` tries that on one real Polars kernel,
+[`float_sum.rs`](https://github.com/pola-rs/polars/blob/py-2.1.0/crates/polars-compute/src/float_sum.rs)
+(polars-compute at py-2.1.0, 314 lines), the pairwise float sum behind `col("x").sum()`.
+
+```
+float_sum.rs --syn (rs2nif, 6 lines of Rust)--> Debug tree
+  --dbg2nif--> NIF "rust-parsed" (8.7k lines) --rcompact--> NIF "rust-core" (2.7k lines)
+  --rs2nim--> float_sum_gen.nim (114 lines) + rshim.nim (hand-written std/arrow pieces)
+```
+
+- `rs2nif` is the only Rust: it prints syn's parse of the file. `dbg2nif` turns that into
+  NIF and `rcompact` is a NIF-to-NIF pass that removes syntax noise (spans, punctuation,
+  default enum values, single-segment paths). Both know nothing about the program.
+- `rs2nim` lowers rust-core NIF to Nim. It knows Rust syntax in general (let, while, for,
+  ranges, if/if let, match, tuples, casts, unsafe blocks, `&self` methods, compound
+  assignment) and a few idioms by name (`iter().map(..).sum()`, `try_into().ok()`, `as_()`,
+  `F::zero()`). Rust's `/` and `%` become `rdiv`/`rmod`, overloaded per type in the shim, so
+  no type inference is needed. `#[cfg(feature = "simd")]` items are dropped: the non-SIMD
+  impl gives the same lane order. Generics are monomorphized (`T=F=float64`); generics
+  that only appear in a where clause stay Nim generics.
+- `rshim.nim` is what the source cannot provide: views for `&[T]`, `as_chunks`,
+  `split_at`, polars-arrow's `BitMask`, and one std fact found while testing: Rust's
+  `impl Sum for f64` folds from -0.0, not 0.0.
+
+Result (`rust2nif/run.sh`, 1300 random arrays over 4 seeds, lengths 0 to 1M, null rates 0
+to 100 %, sliced views with Arrow offsets, values up to 1e16 so the summation order shows):
+**the translated Nim is bit-identical to Polars' sum on every array**, while a plain
+left-to-right loop matches on only about 6 % of them. 10M values on one thread: Polars
+3.6 ms, translated Nim 4.4 ms (`-d:danger`, no SIMD flags), same bits.
+
+One thing the oracle had to learn: Polars' sum is only reproducible on one thread with the
+in-memory engine. With more threads, or the streaming engine (which `Engine.Auto` picks
+for large frames), the column is split into pieces summed in parallel, and the last bit can
+change from run to run. The test sets `POLARS_MAX_THREADS=1` and `Engine.InMemory`.
+
+How far does this go? `rust2nif/coverage.sh` runs the pipeline over all of
+polars-compute (111 files, 24.7k lines). syn parses every file, and **573 of 856
+functions** lower without an unsupported node. That is syntax coverage only: the output
+is not compiled, and each crate API it calls needs a shim (polars-compute calls 415
+distinct method names). The biggest gaps, by occurrences: `dyn Trait` types (131), closures
+with statement bodies (128), macros in expressions (104: `vec!`, `polars_bail!`,
+`unreachable!`, ...; syn gives macro bodies as token streams), `?` (68), struct literals
+(58), `_` types (40). Each is a design choice more than work: closures could become Nim
+lambdas or inlined loops, `?` needs an error model, `dyn` needs a vtable story.
+
+So the honest summary: on a self-contained numeric kernel, mechanical Rust → NIF → Nim
+works and Polars confirms it to the bit. The cost moves into the shim (std, arrow,
+polars-utils) and into lowering rules for each Rust idiom, which is the kind of work an
+agent can grind through with the oracle checking every step.
+
 ## What this experiment did not do
 
 - The host side (`jit.nim`, Nanuq itself) is Nim 2; Nimony compiles the kernels only.
@@ -255,6 +309,7 @@ to `x[i]` inside a nested loop), which suits generated code.
 | `bench/bench.nim` | timings against Polars |
 | `tools/explain.nim`, `tools/demo.nim` | look at each step |
 | `nimony/` | the kernels through Nimony |
+| `rust2nif/` | Polars' `float_sum.rs` through NIF to Nim, bit-exact test, coverage script |
 
 ## Explainer
 

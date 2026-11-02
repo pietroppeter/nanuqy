@@ -33,8 +33,8 @@ proc floatLit*(f: float64): Nif = Nif(kind: nkFloat, f: f)
 proc empty*(): Nif = Nif(kind: nkEmpty)
 
 proc `[]`*(n: Nif, i: int): Nif = n.kids[i]
-proc len*(n: Nif): int = (if n.kind == nkTree: n.kids.len else: 0)
-proc isTag*(n: Nif, tag: string): bool = n.kind == nkTree and n.tag == tag
+proc len*(n: Nif): int = (if not n.isNil and n.kind == nkTree: n.kids.len else: 0)
+proc isTag*(n: Nif, tag: string): bool = not n.isNil and n.kind == nkTree and n.tag == tag
 
 # --- writing -----------------------------------------------------------------
 
